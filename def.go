@@ -21,5 +21,5 @@ var (
 type (
 	Config = nsq.Config
 
-	MessageHandleProc = func(message *Message) error
+	MessageHandleProc func(message *Message) error
 )

@@ -125,8 +125,9 @@ func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
 		defer c.wg.Done()
 
 		message := &Message{
-			Message: m,
-			Topic:   topic,
+			Message:                 m,
+			Topic:                   topic,
+			unhandledMessageHandler: c.UnhandledMessageHandler,
 		}
 
 		if c.MessageHandler != nil {
