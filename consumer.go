@@ -7,6 +7,10 @@ import (
 	"github.com/nsqio/go-nsq"
 )
 
+var (
+	ZeroInt int = 0
+)
+
 type Consumer struct {
 	NsqAddress              string // nsqd:127.0.0.1:4150,127.0.0.2:4150 -or- nsqlookupd:127.0.0.1:4161,127.0.0.2:4161
 	Channel                 string
