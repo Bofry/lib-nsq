@@ -31,3 +31,7 @@ func (m *Message) ForwardUnhandledMessageHandler() error {
 	}
 	return nil
 }
+
+func (m *Message) StopForwardUnhandledMessageHandler() {
+	atomic.StoreInt32(m.unhandledMessageHandlerFlag, 1)
+}
