@@ -12,6 +12,7 @@ import (
 
 func TestConsumer(t *testing.T) {
 
+	// the config only for test use !!
 	config := nsq.NewConfig()
 	{
 		config.LookupdPollInterval = time.Second * 3
