@@ -27,8 +27,8 @@ func TestConsumer(t *testing.T) {
 		Channel:            "gotest",
 		HandlerConcurrency: 3,
 		Config:             config,
-		MessageHandler: nsq.MessageHandleProc(func(message *nsq.Message) error {
-			fmt.Printf("[%s] (%s) %+v\n", message.Topic, message.NSQDAddress, string(message.Body))
+		MessageHandler: nsq.MessageHandleProc(func(ctx *nsq.ConsumeContext, message *nsq.Message) error {
+			fmt.Printf("[%s] (%s) %+v\n", ctx.Topic, message.NSQDAddress, string(message.Body))
 			message.Finish()
 			return nil
 		}),

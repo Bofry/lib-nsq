@@ -2,7 +2,6 @@ package nsq
 
 import (
 	"log"
-	"os"
 
 	"github.com/nsqio/go-nsq"
 )
@@ -15,11 +14,12 @@ const (
 )
 
 var (
-	logger *log.Logger = log.New(os.Stdout, LOGGER_PREFIX, log.LstdFlags|log.Lmsgprefix)
+	logger *log.Logger = log.New(log.Writer(), LOGGER_PREFIX, log.LstdFlags|log.Lmsgprefix)
 )
 
 type (
-	Config = nsq.Config
+	Config  = nsq.Config
+	Message = nsq.Message
 
-	MessageHandleProc func(message *Message) error
+	MessageHandleProc func(ctx *ConsumeContext, message *Message) error
 )

@@ -1,7 +1,10 @@
 package nsq
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -11,6 +14,8 @@ import (
 type Producer struct {
 	pool *ProducerPool
 
+	Logger *log.Logger
+
 	wg          sync.WaitGroup
 	mutex       sync.Mutex
 	disposed    bool
@@ -18,7 +23,9 @@ type Producer struct {
 }
 
 func NewProducer(opt *ProducerOption) (*Producer, error) {
-	instance := &Producer{}
+	instance := &Producer{
+		Logger: logger,
+	}
 
 	var err error
 	err = instance.init(opt)
@@ -36,6 +43,28 @@ func (p *Producer) Handle() *nsq.Producer {
 	return p.pool.handles[p.pool.current]
 }
 
+func (p *Producer) WriteContent(topic string, content MessageContent) error {
+	if p.disposed {
+		return fmt.Errorf("the Producer has been disposed")
+	}
+	if !p.initialized {
+		p.Logger.Panic("the Producer haven't be initialized yet")
+	}
+
+	var (
+		payload bytes.Buffer
+		w       *bufio.Writer = bufio.NewWriter(&payload)
+	)
+	if _, err := content.WriteTo(w); err != nil {
+		return err
+	}
+	if err := w.Flush(); err != nil {
+		return err
+	}
+
+	return p.Write(topic, payload.Bytes())
+}
+
 func (p *Producer) Write(topic string, body []byte) error {
 	if p.disposed {
 		return fmt.Errorf("the Producer has been disposed")
@@ -48,6 +77,28 @@ func (p *Producer) Write(topic string, body []byte) error {
 	defer p.wg.Done()
 
 	return p.pool.publish(topic, body)
+}
+
+func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, content MessageContent) error {
+	if p.disposed {
+		return fmt.Errorf("the Producer has been disposed")
+	}
+	if !p.initialized {
+		logger.Panic("the Producer haven't be initialized yet")
+	}
+
+	var (
+		payload bytes.Buffer
+		w       *bufio.Writer = bufio.NewWriter(&payload)
+	)
+	if _, err := content.WriteTo(w); err != nil {
+		return err
+	}
+	if err := w.Flush(); err != nil {
+		return err
+	}
+
+	return p.DeferredWrite(topic, delay, payload.Bytes())
 }
 
 func (p *Producer) DeferredWrite(topic string, delay time.Duration, body []byte) error {

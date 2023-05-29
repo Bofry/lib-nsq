@@ -5,11 +5,11 @@ type ForwarderRunner struct {
 }
 
 func (r *ForwarderRunner) Start() {
-	logger.Println("Started")
+	r.handle.Logger.Println("Started")
 }
 
 func (r *ForwarderRunner) Stop() {
-	logger.Println("Stopping")
+	r.handle.Logger.Println("Stopping")
 	r.handle.Close()
-	logger.Println("Stopped")
+	r.handle.Logger.Println("Stopped")
 }

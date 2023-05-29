@@ -2,6 +2,7 @@ package nsq
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/nsqio/go-nsq"
@@ -18,6 +19,7 @@ type Consumer struct {
 	Config                  *Config
 	MessageHandler          MessageHandleProc
 	UnhandledMessageHandler MessageHandleProc
+	Logger                  *log.Logger
 
 	consumers []*nsq.Consumer
 	wg        sync.WaitGroup
@@ -116,6 +118,10 @@ func (c *Consumer) init() {
 		return
 	}
 
+	if c.Logger == nil {
+		c.Logger = logger
+	}
+
 	if c.Config == nil {
 		c.Config = nsq.NewConfig()
 	}
@@ -124,26 +130,24 @@ func (c *Consumer) init() {
 }
 
 func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
-	var proc = func(m *nsq.Message) error {
+	var proc = func(msg *Message) error {
 		c.wg.Add(1)
 		defer c.wg.Done()
 
-		message := &Message{
-			Message:                 m,
+		ctx := &ConsumeContext{
 			Topic:                   topic,
+			logger:                  c.Logger,
 			unhandledMessageHandler: c.UnhandledMessageHandler,
 		}
 
 		if c.MessageHandler != nil {
-			return c.MessageHandler(message)
+			return c.MessageHandler(ctx, msg)
 		}
 		if c.UnhandledMessageHandler != nil {
-			return c.UnhandledMessageHandler(message)
+			return c.UnhandledMessageHandler(ctx, msg)
 		}
 		return nil
 	}
 
-	// type assertion
-	var _ nsq.HandlerFunc = proc
 	return proc
 }
