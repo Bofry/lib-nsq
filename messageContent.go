@@ -13,7 +13,7 @@ var (
 )
 
 type MessageContent struct {
-	State MessageState
+	State *MessageState
 	Body  []byte
 }
 
@@ -101,7 +101,7 @@ func (c *MessageContent) WriteTo(w io.Writer) (int64, error) {
  */
 func DecodeMessageContent(source []byte) (*MessageContent, error) {
 	var (
-		state MessageState
+		state *MessageState = new(MessageState)
 		body  []byte
 	)
 
@@ -213,7 +213,6 @@ func DecodeMessageContent(source []byte) (*MessageContent, error) {
 		State: state,
 		Body:  body,
 	}, nil
-
 }
 
 func isSupportedMessageContentVersion(ver byte) bool {

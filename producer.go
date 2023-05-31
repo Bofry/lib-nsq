@@ -43,7 +43,7 @@ func (p *Producer) Handle() *nsq.Producer {
 	return p.pool.handles[p.pool.current]
 }
 
-func (p *Producer) WriteContent(topic string, content MessageContent) error {
+func (p *Producer) WriteContent(topic string, content *MessageContent) error {
 	if p.disposed {
 		return fmt.Errorf("the Producer has been disposed")
 	}
@@ -79,7 +79,7 @@ func (p *Producer) Write(topic string, body []byte) error {
 	return p.pool.publish(topic, body)
 }
 
-func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, content MessageContent) error {
+func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, content *MessageContent) error {
 	if p.disposed {
 		return fmt.Errorf("the Producer has been disposed")
 	}

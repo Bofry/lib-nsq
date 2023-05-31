@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"reflect"
 	"sync"
+
+	"github.com/Bofry/lib-nsq/tracing"
 )
 
 const (
 	MESSAGE_STATE_NAME_MAX_LENGTH = 255
 	MESSAGE_STATE_VALUE_MAX_SIZE  = 0x0fff
 )
+
+var _ tracing.MessageState = new(MessageState)
 
 type MessageState struct {
 	values map[string][]byte
@@ -67,7 +71,9 @@ func (s *MessageState) Set(name string, value []byte) (old []byte, err error) {
 		}
 
 		s.valuesOnce.Do(func() {
-			s.values = make(map[string][]byte)
+			if s.values == nil {
+				s.values = make(map[string][]byte)
+			}
 		})
 	}
 	// name existed?
