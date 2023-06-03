@@ -22,13 +22,13 @@ type Producer struct {
 	initialized bool
 }
 
-func NewProducer(opt *ProducerOption) (*Producer, error) {
+func NewProducer(conf *ProducerConf) (*Producer, error) {
 	instance := &Producer{
 		Logger: logger,
 	}
 
 	var err error
-	err = instance.init(opt)
+	err = instance.init(conf)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (p *Producer) Handle() *nsq.Producer {
 	return p.pool.handles[p.pool.current]
 }
 
-func (p *Producer) WriteContent(topic string, content *MessageContent) error {
+func (p *Producer) WriteContent(topic string, msg *MessageContent, opts ...ProduceMessageContentOption) error {
 	if p.disposed {
 		return fmt.Errorf("the Producer has been disposed")
 	}
@@ -51,11 +51,19 @@ func (p *Producer) WriteContent(topic string, content *MessageContent) error {
 		p.Logger.Panic("the Producer haven't be initialized yet")
 	}
 
+	// apply options
+	for _, opt := range opts {
+		err := opt.apply(topic, msg)
+		if err != nil {
+			return err
+		}
+	}
+
 	var (
 		payload bytes.Buffer
 		w       *bufio.Writer = bufio.NewWriter(&payload)
 	)
-	if _, err := content.WriteTo(w); err != nil {
+	if _, err := msg.WriteTo(w); err != nil {
 		return err
 	}
 	if err := w.Flush(); err != nil {
@@ -79,7 +87,7 @@ func (p *Producer) Write(topic string, body []byte) error {
 	return p.pool.publish(topic, body)
 }
 
-func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, content *MessageContent) error {
+func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, msg *MessageContent, opts ...ProduceMessageContentOption) error {
 	if p.disposed {
 		return fmt.Errorf("the Producer has been disposed")
 	}
@@ -87,11 +95,19 @@ func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, conte
 		logger.Panic("the Producer haven't be initialized yet")
 	}
 
+	// apply options
+	for _, opt := range opts {
+		err := opt.apply(topic, msg)
+		if err != nil {
+			return err
+		}
+	}
+
 	var (
 		payload bytes.Buffer
 		w       *bufio.Writer = bufio.NewWriter(&payload)
 	)
-	if _, err := content.WriteTo(w); err != nil {
+	if _, err := msg.WriteTo(w); err != nil {
 		return err
 	}
 	if err := w.Flush(); err != nil {
@@ -129,13 +145,13 @@ func (p *Producer) Close() {
 	p.pool.dispose()
 }
 
-func (p *Producer) init(opt *ProducerOption) error {
+func (p *Producer) init(opt *ProducerConf) error {
 	if p.initialized {
 		return nil
 	}
 
 	if opt == nil {
-		opt = &ProducerOption{}
+		opt = &ProducerConf{}
 	}
 	opt.init()
 

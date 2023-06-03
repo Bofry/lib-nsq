@@ -22,4 +22,8 @@ type (
 	Message = nsq.Message
 
 	MessageHandleProc func(ctx *ConsumeContext, message *Message) error
+
+	ProduceMessageContentOption interface {
+		apply(topic string, msg *MessageContent) error
+	}
 )

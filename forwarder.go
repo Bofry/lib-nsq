@@ -4,8 +4,8 @@ type Forwarder struct {
 	*Producer
 }
 
-func NewForwarder(opt *ProducerOption) (*Forwarder, error) {
-	producer, err := NewProducer(opt)
+func NewForwarder(conf *ProducerConf) (*Forwarder, error) {
+	producer, err := NewProducer(conf)
 	if err != nil {
 		return nil, err
 	}

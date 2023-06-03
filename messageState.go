@@ -3,7 +3,6 @@ package nsq
 import (
 	"fmt"
 	"reflect"
-	"sync"
 
 	"github.com/Bofry/lib-nsq/tracing"
 )
@@ -16,10 +15,9 @@ const (
 var _ tracing.MessageState = new(MessageState)
 
 type MessageState struct {
+	noCopy noCopy
 	values map[string][]byte
 	size   int
-
-	valuesOnce sync.Once
 }
 
 func (s *MessageState) Len() int {
@@ -70,11 +68,9 @@ func (s *MessageState) Set(name string, value []byte) (old []byte, err error) {
 			return nil, nil
 		}
 
-		s.valuesOnce.Do(func() {
-			if s.values == nil {
-				s.values = make(map[string][]byte)
-			}
-		})
+		if s.values == nil {
+			s.values = make(map[string][]byte)
+		}
 	}
 	// name existed?
 	if v, ok := s.values[name]; ok {

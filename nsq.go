@@ -1,7 +1,8 @@
 package nsq
 
-import "github.com/nsqio/go-nsq"
+import (
+	_ "unsafe"
+)
 
-func NewConfig() *Config {
-	return nsq.NewConfig()
-}
+//go:linkname NewConfig github.com/nsqio/go-nsq.NewConfig
+func NewConfig() *Config

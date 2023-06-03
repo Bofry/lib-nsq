@@ -8,7 +8,7 @@ import (
 )
 
 func TestMessageContent_WriteTo_Case01(t *testing.T) {
-	content := MessageContent{}
+	content := NewMessageContent()
 
 	content.State.Set("foo", []byte("bar"))
 	content.Body = []byte("the quick brown fox jumps over the lazy dog")
@@ -50,7 +50,7 @@ func TestMessageContent_WriteTo_Case01(t *testing.T) {
 }
 
 func TestMessageContent_WriteTo_Case02(t *testing.T) {
-	content := MessageContent{}
+	content := NewMessageContent()
 
 	content.State.Set("foo1", []byte("bar1"))
 	content.State.Set("foo2", []byte("bar2-baz"))
@@ -148,7 +148,7 @@ func TestDecodeMessageContent(t *testing.T) {
 }
 
 func TestMessageContent_Sanity(t *testing.T) {
-	content := MessageContent{}
+	content := NewMessageContent()
 
 	content.State.Set("foo1", []byte("bar1"))
 	content.State.Set("foo2", []byte("bar2-baz"))

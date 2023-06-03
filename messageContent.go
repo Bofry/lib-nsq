@@ -13,8 +13,15 @@ var (
 )
 
 type MessageContent struct {
-	State *MessageState
+	State MessageState
 	Body  []byte
+}
+
+func NewMessageContent() *MessageContent {
+	return &MessageContent{
+		State: MessageState{},
+		Body:  nil,
+	}
 }
 
 func (c *MessageContent) WriteTo(w io.Writer) (int64, error) {
@@ -101,7 +108,7 @@ func (c *MessageContent) WriteTo(w io.Writer) (int64, error) {
  */
 func DecodeMessageContent(source []byte) (*MessageContent, error) {
 	var (
-		state *MessageState = new(MessageState)
+		state *MessageState = &MessageState{}
 		body  []byte
 	)
 
@@ -210,7 +217,7 @@ func DecodeMessageContent(source []byte) (*MessageContent, error) {
 		}
 	}
 	return &MessageContent{
-		State: state,
+		State: *state,
 		Body:  body,
 	}, nil
 }

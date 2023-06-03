@@ -1,12 +1,12 @@
 package nsq
 
-type ProducerOption struct {
+type ProducerConf struct {
 	Address           []string
 	ReplicationFactor int32
 	Config            *Config
 }
 
-func (opt *ProducerOption) init() {
+func (opt *ProducerConf) init() {
 	if len(opt.Address) == 0 {
 		opt.Address = []string{
 			"localhost:4150",
