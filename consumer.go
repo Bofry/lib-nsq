@@ -130,21 +130,20 @@ func (c *Consumer) init() {
 }
 
 func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
-	var proc = func(msg *Message) error {
+	var proc = func(msg *nsq.Message) error {
 		c.wg.Add(1)
 		defer c.wg.Done()
 
-		ctx := &ConsumeContext{
-			Topic:                   topic,
-			logger:                  c.Logger,
-			unhandledMessageHandler: c.UnhandledMessageHandler,
+		m := &Message{
+			Topic:   topic,
+			Message: msg,
 		}
 
 		if c.MessageHandler != nil {
-			return c.MessageHandler(ctx, msg)
+			return c.MessageHandler(m)
 		}
 		if c.UnhandledMessageHandler != nil {
-			return c.UnhandledMessageHandler(ctx, msg)
+			return c.UnhandledMessageHandler(m)
 		}
 		return nil
 	}

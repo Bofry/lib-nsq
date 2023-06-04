@@ -159,8 +159,8 @@ func TestProducer_Write(t *testing.T) {
 			Channel:            "gotest",
 			HandlerConcurrency: 3,
 			Config:             config,
-			MessageHandler: nsq.MessageHandleProc(func(ctx *nsq.ConsumeContext, message *nsq.Message) error {
-				// t.Logf("[%s] %+v\n", ctx.Topic, string(message.Body))
+			MessageHandler: nsq.MessageHandleProc(func(message *nsq.Message) error {
+				// t.Logf("[%s] %+v\n", message.Topic, string(message.Body))
 				receivedMessages = append(receivedMessages, string(message.Body))
 				message.Finish()
 				return nil
@@ -238,7 +238,7 @@ func TestProducer_WriteContent(t *testing.T) {
 			Channel:            "gotest",
 			HandlerConcurrency: 3,
 			Config:             config,
-			MessageHandler: nsq.MessageHandleProc(func(ctx *nsq.ConsumeContext, message *nsq.Message) error {
+			MessageHandler: nsq.MessageHandleProc(func(message *nsq.Message) error {
 				content, err := nsq.DecodeMessageContent(message.Body)
 				if err != nil {
 					t.Fatal(err)
@@ -253,7 +253,7 @@ func TestProducer_WriteContent(t *testing.T) {
 					t.Errorf("MessageState[foo] expected: %v, got: %v", expectStateFooValue, actualStateFooValue)
 				}
 
-				// t.Logf("[%s] %+v\n", ctx.Topic, string(content.Body))
+				// t.Logf("[%s] %+v\n", message.Topic, string(content.Body))
 				receivedMessages = append(receivedMessages, string(content.Body))
 				message.Finish()
 				return nil
@@ -333,7 +333,7 @@ func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 			Channel:            "gotest",
 			HandlerConcurrency: 3,
 			Config:             config,
-			MessageHandler: nsq.MessageHandleProc(func(ctx *nsq.ConsumeContext, message *nsq.Message) error {
+			MessageHandler: nsq.MessageHandleProc(func(message *nsq.Message) error {
 				content, err := nsq.DecodeMessageContent(message.Body)
 				if err != nil {
 					t.Fatal(err)
@@ -346,7 +346,7 @@ func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 					t.Errorf("missing MessageState[traceparent]")
 				}
 
-				// t.Logf("[%s] %+v\n", ctx.Topic, string(content.Body))
+				// t.Logf("[%s] %+v\n", message.Topic, string(content.Body))
 				receivedMessages = append(receivedMessages, string(content.Body))
 				message.Finish()
 				return nil

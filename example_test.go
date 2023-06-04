@@ -3,16 +3,33 @@ package nsq_test
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	nsq "github.com/Bofry/lib-nsq"
 )
 
 func Example() {
+	var (
+		EVN_NSQD_SERVERS       = strings.Split(os.Getenv("NSQD_SERVERS"), ",")
+		ENV_NSQD_ADDRESS       = os.Getenv("NSQD_ADDRESS")
+		ENV_NSQLOOKUPD_ADDRESS = os.Getenv("NSQLOOKUPD_ADDRESS")
+	)
+	if len(ENV_NSQD_ADDRESS) == 0 {
+		EVN_NSQD_SERVERS = []string{"127.0.0.1:4150"}
+	}
+	if len(ENV_NSQD_ADDRESS) == 0 {
+		ENV_NSQD_ADDRESS = "nsqd://127.0.0.1:4150"
+	}
+	if len(ENV_NSQLOOKUPD_ADDRESS) == 0 {
+		ENV_NSQLOOKUPD_ADDRESS = "nsqlookupd://127.0.0.1:4160"
+	}
+
 	// publish
 	{
 		p, err := nsq.NewProducer(&nsq.ProducerConfig{
-			Address:           []string{"127.0.0.1:4150"},
+			Address:           EVN_NSQD_SERVERS,
 			Config:            nsq.NewConfig(),
 			ReplicationFactor: 1,
 		})
@@ -43,12 +60,12 @@ func Example() {
 		}
 
 		c := &nsq.Consumer{
-			NsqAddress:         "nsqlookupd://127.0.0.1:4160",
+			NsqAddress:         ENV_NSQLOOKUPD_ADDRESS,
 			Channel:            "gotest",
 			HandlerConcurrency: 3,
 			Config:             config,
-			MessageHandler: nsq.MessageHandleProc(func(ctx *nsq.ConsumeContext, message *nsq.Message) error {
-				fmt.Printf("[%s] %+v\n", ctx.Topic, string(message.Body))
+			MessageHandler: nsq.MessageHandleProc(func(message *nsq.Message) error {
+				fmt.Printf("[%s] %+v\n", message.Topic, string(message.Body))
 				message.Finish()
 				return nil
 			}),

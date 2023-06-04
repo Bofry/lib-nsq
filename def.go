@@ -18,10 +18,9 @@ var (
 )
 
 type (
-	Config  = nsq.Config
-	Message = nsq.Message
+	Config = nsq.Config
 
-	MessageHandleProc func(ctx *ConsumeContext, message *Message) error
+	MessageHandleProc func(message *Message) error
 
 	ProduceMessageContentOption interface {
 		apply(topic string, msg *MessageContent) error
