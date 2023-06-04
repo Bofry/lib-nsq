@@ -18,8 +18,7 @@ type Consumer struct {
 	HandlerConcurrency int
 	Config             *Config
 	MessageHandler     MessageHandleProc
-	// UnhandledMessageHandler MessageHandleProc
-	Logger *log.Logger
+	Logger             *log.Logger
 
 	consumers []*nsq.Consumer
 	wg        sync.WaitGroup
@@ -142,9 +141,6 @@ func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
 		if c.MessageHandler != nil {
 			return c.MessageHandler(m)
 		}
-		// if c.UnhandledMessageHandler != nil {
-		// 	return c.UnhandledMessageHandler(m)
-		// }
 		return nil
 	}
 
