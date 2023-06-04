@@ -11,7 +11,7 @@ import (
 func Example() {
 	// publish
 	{
-		p, err := nsq.NewProducer(&nsq.ProducerConf{
+		p, err := nsq.NewProducer(&nsq.ProducerConfig{
 			Address:           []string{"127.0.0.1:4150"},
 			Config:            nsq.NewConfig(),
 			ReplicationFactor: 1,

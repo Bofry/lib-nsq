@@ -22,13 +22,13 @@ type Producer struct {
 	initialized bool
 }
 
-func NewProducer(conf *ProducerConf) (*Producer, error) {
+func NewProducer(config *ProducerConfig) (*Producer, error) {
 	instance := &Producer{
 		Logger: logger,
 	}
 
 	var err error
-	err = instance.init(conf)
+	err = instance.init(config)
 	if err != nil {
 		return nil, err
 	}
@@ -145,13 +145,13 @@ func (p *Producer) Close() {
 	p.pool.dispose()
 }
 
-func (p *Producer) init(opt *ProducerConf) error {
+func (p *Producer) init(opt *ProducerConfig) error {
 	if p.initialized {
 		return nil
 	}
 
 	if opt == nil {
-		opt = &ProducerConf{}
+		opt = &ProducerConfig{}
 	}
 	opt.init()
 

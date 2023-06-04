@@ -111,7 +111,7 @@ func TestMain(m *testing.M) {
 func TestProducer_Write(t *testing.T) {
 	// publish
 	{
-		p, err := nsq.NewProducer(&nsq.ProducerConf{
+		p, err := nsq.NewProducer(&nsq.ProducerConfig{
 			Address:           __TEST_NSQD_SERVERS,
 			Config:            nsq.NewConfig(),
 			ReplicationFactor: 1,
@@ -168,7 +168,7 @@ func TestProducer_Write(t *testing.T) {
 			UnhandledMessageHandler: nil,
 		}
 
-		ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+		ctx, _ := context.WithTimeout(context.Background(), 3*time.Second)
 
 		err := c.Subscribe([]string{"myTopic"})
 		if err != nil {
@@ -186,7 +186,7 @@ func TestProducer_Write(t *testing.T) {
 func TestProducer_WriteContent(t *testing.T) {
 	// publish
 	{
-		p, err := nsq.NewProducer(&nsq.ProducerConf{
+		p, err := nsq.NewProducer(&nsq.ProducerConfig{
 			Address:           __TEST_NSQD_SERVERS,
 			Config:            nsq.NewConfig(),
 			ReplicationFactor: 1,
@@ -261,7 +261,7 @@ func TestProducer_WriteContent(t *testing.T) {
 			UnhandledMessageHandler: nil,
 		}
 
-		ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+		ctx, _ := context.WithTimeout(context.Background(), 3*time.Second)
 
 		err := c.Subscribe([]string{"myTopic"})
 		if err != nil {
@@ -279,7 +279,7 @@ func TestProducer_WriteContent(t *testing.T) {
 func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 	// publish
 	{
-		p, err := nsq.NewProducer(&nsq.ProducerConf{
+		p, err := nsq.NewProducer(&nsq.ProducerConfig{
 			Address:           __TEST_NSQD_SERVERS,
 			Config:            nsq.NewConfig(),
 			ReplicationFactor: 1,
@@ -354,7 +354,7 @@ func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 			UnhandledMessageHandler: nil,
 		}
 
-		ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+		ctx, _ := context.WithTimeout(context.Background(), 3*time.Second)
 
 		err := c.Subscribe([]string{"myTopic"})
 		if err != nil {
