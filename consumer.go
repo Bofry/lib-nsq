@@ -30,11 +30,13 @@ type Consumer struct {
 }
 
 func (c *Consumer) Subscribe(topics []string) error {
+	c.ensureLogger()
+
 	if c.disposed {
-		logger.Panic("the Consumer has been disposed")
+		c.Logger.Panic("the Consumer has been disposed")
 	}
 	if c.running {
-		logger.Panic("the Consumer is running")
+		c.Logger.Panic("the Consumer is running")
 	}
 
 	var err error
@@ -55,6 +57,8 @@ func (c *Consumer) Subscribe(topics []string) error {
 		if err != nil {
 			return err
 		}
+
+		consumer.SetLogger(c.Logger, nsq.LogLevelInfo)
 
 		handler := c.createMessageHandler(topic)
 
@@ -117,10 +121,6 @@ func (c *Consumer) init() {
 		return
 	}
 
-	if c.Logger == nil {
-		c.Logger = logger
-	}
-
 	if c.Config == nil {
 		c.Config = nsq.NewConfig()
 	}
@@ -145,4 +145,10 @@ func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
 	}
 
 	return proc
+}
+
+func (c *Consumer) ensureLogger() {
+	if c.Logger == nil {
+		c.Logger = defaultLogger
+	}
 }

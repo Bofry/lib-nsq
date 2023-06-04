@@ -26,7 +26,6 @@ func NewMessageContent() *MessageContent {
 
 func (c *MessageContent) WriteTo(w io.Writer) (int64, error) {
 	var (
-		state = c.State
 		total int64
 	)
 
@@ -43,7 +42,7 @@ func (c *MessageContent) WriteTo(w io.Writer) (int64, error) {
 	// write state and tags
 	{
 		var (
-			statesize int = state.byteSize() + (state.Len() * 3)
+			statesize int = c.State.byteSize() + (c.State.Len() * 3)
 			buf           = make([]byte, statesize+2)
 			offset    int = 0
 			bytes     int = 0
@@ -53,8 +52,8 @@ func (c *MessageContent) WriteTo(w io.Writer) (int64, error) {
 		binary.BigEndian.PutUint16(buf[offset:offset+bytes], uint16(statesize))
 		offset += bytes
 
-		if state.Len() > 0 {
-			for k, v := range state.values {
+		if c.State.Len() > 0 {
+			for k, v := range c.State.values {
 				var size int = len(k) + len(v) + 1
 
 				bytes = 2

@@ -2,7 +2,6 @@ package nsq
 
 import (
 	"fmt"
-	"log"
 	"sync/atomic"
 	"time"
 
@@ -11,7 +10,6 @@ import (
 
 type ProducerPool struct {
 	handles []*nsq.Producer
-	logger  *log.Logger
 
 	replicationFactor int32
 
@@ -25,7 +23,7 @@ func (p *ProducerPool) publish(topic string, body []byte) error {
 		return fmt.Errorf("the ProducerPool has been disposed")
 	}
 	if !p.initialized {
-		logger.Panic("the ProducerPool haven't be initialized yet")
+		defaultLogger.Panic("the ProducerPool haven't be initialized yet")
 	}
 
 	var (
@@ -80,7 +78,7 @@ func (p *ProducerPool) deferredPublish(topic string, delay time.Duration, body [
 		return fmt.Errorf("the ProducerPool has been disposed")
 	}
 	if !p.initialized {
-		logger.Panic("the ProducerPool haven't be initialized yet")
+		defaultLogger.Panic("the ProducerPool haven't be initialized yet")
 	}
 
 	var (
@@ -154,10 +152,6 @@ func (p *ProducerPool) init() {
 	if p.replicationFactor > size {
 		p.replicationFactor = size
 	}
-
-	// for _, handle := range p.handles {
-	// 	handle.SetLogger(p.logger, nsq.LogLevelInfo)
-	// }
 
 	p.initialized = true
 }

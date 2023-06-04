@@ -14,7 +14,7 @@ import (
 type Producer struct {
 	pool *ProducerPool
 
-	Logger *log.Logger
+	logger *log.Logger
 
 	wg          sync.WaitGroup
 	mutex       sync.Mutex
@@ -23,9 +23,7 @@ type Producer struct {
 }
 
 func NewProducer(config *ProducerConfig) (*Producer, error) {
-	instance := &Producer{
-		Logger: logger,
-	}
+	instance := &Producer{}
 
 	var err error
 	err = instance.init(config)
@@ -48,7 +46,7 @@ func (p *Producer) WriteContent(topic string, msg *MessageContent, opts ...Produ
 		return fmt.Errorf("the Producer has been disposed")
 	}
 	if !p.initialized {
-		p.Logger.Panic("the Producer haven't be initialized yet")
+		p.logger.Panic("the Producer haven't be initialized yet")
 	}
 
 	// apply options
@@ -78,7 +76,7 @@ func (p *Producer) Write(topic string, body []byte) error {
 		return fmt.Errorf("the Producer has been disposed")
 	}
 	if !p.initialized {
-		logger.Panic("the Producer haven't be initialized yet")
+		defaultLogger.Panic("the Producer haven't be initialized yet")
 	}
 
 	p.wg.Add(1)
@@ -92,7 +90,7 @@ func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, msg *
 		return fmt.Errorf("the Producer has been disposed")
 	}
 	if !p.initialized {
-		logger.Panic("the Producer haven't be initialized yet")
+		defaultLogger.Panic("the Producer haven't be initialized yet")
 	}
 
 	// apply options
@@ -122,7 +120,7 @@ func (p *Producer) DeferredWrite(topic string, delay time.Duration, body []byte)
 		return fmt.Errorf("the Producer has been disposed")
 	}
 	if !p.initialized {
-		logger.Panic("the Producer haven't be initialized yet")
+		defaultLogger.Panic("the Producer haven't be initialized yet")
 	}
 
 	p.wg.Add(1)
@@ -145,27 +143,35 @@ func (p *Producer) Close() {
 	p.pool.dispose()
 }
 
-func (p *Producer) init(opt *ProducerConfig) error {
+func (p *Producer) init(config *ProducerConfig) error {
 	if p.initialized {
 		return nil
 	}
 
-	if opt == nil {
-		opt = &ProducerConfig{}
+	if config == nil {
+		config = &ProducerConfig{}
 	}
-	opt.init()
+	config.init()
+	err := config.Validate()
+	if err != nil {
+		return err
+	}
+
+	// config logger
+	p.configureLogger(config)
 
 	// config Producer.pool
 	{
 		var (
 			handles []*nsq.Producer
 		)
-		for _, addr := range opt.Address {
-			q, err := nsq.NewProducer(addr, opt.Config)
+		for _, addr := range config.Address {
+			q, err := nsq.NewProducer(addr, config.Config)
 			if err != nil {
 				return err
 			}
 			if q != nil {
+				q.SetLogger(p.logger, nsq.LogLevelInfo)
 				// test the connection
 				err = q.Ping()
 				if err != nil {
@@ -178,7 +184,7 @@ func (p *Producer) init(opt *ProducerConfig) error {
 
 		pool := &ProducerPool{
 			handles:           handles,
-			replicationFactor: opt.ReplicationFactor,
+			replicationFactor: config.ReplicationFactor,
 		}
 		pool.init()
 
@@ -188,4 +194,12 @@ func (p *Producer) init(opt *ProducerConfig) error {
 	}
 
 	return nil
+}
+
+func (p *Producer) configureLogger(config *ProducerConfig) {
+	if config.Logger != nil {
+		p.logger = config.Logger
+		return
+	}
+	p.logger = defaultLogger
 }
