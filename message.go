@@ -7,3 +7,8 @@ type Message struct {
 
 	Topic string
 }
+
+func (m *Message) Content() *MessageContent {
+	content, _ := DecodeMessageContent(m.Body)
+	return content
+}

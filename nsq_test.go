@@ -238,9 +238,9 @@ func TestProducer_WriteContent(t *testing.T) {
 			HandlerConcurrency: 3,
 			Config:             config,
 			MessageHandler: nsq.MessageHandleProc(func(message *nsq.Message) error {
-				content, err := nsq.DecodeMessageContent(message.Body)
-				if err != nil {
-					t.Fatal(err)
+				content := message.Content()
+				if content == nil {
+					t.Errorf("missing MessageContent")
 				}
 
 				if content.State.Len() == 0 {
@@ -332,9 +332,9 @@ func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 			HandlerConcurrency: 3,
 			Config:             config,
 			MessageHandler: nsq.MessageHandleProc(func(message *nsq.Message) error {
-				content, err := nsq.DecodeMessageContent(message.Body)
-				if err != nil {
-					t.Fatal(err)
+				content := message.Content()
+				if content == nil {
+					t.Errorf("missing MessageContent")
 				}
 
 				if content.State.Len() == 0 {
