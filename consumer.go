@@ -13,13 +13,13 @@ var (
 )
 
 type Consumer struct {
-	NsqAddress              string // nsqd://127.0.0.1:4150,127.0.0.2:4150 -or- nsqlookupd://127.0.0.1:4161,127.0.0.2:4161
-	Channel                 string
-	HandlerConcurrency      int
-	Config                  *Config
-	MessageHandler          MessageHandleProc
-	UnhandledMessageHandler MessageHandleProc
-	Logger                  *log.Logger
+	NsqAddress         string // nsqd://127.0.0.1:4150,127.0.0.2:4150 -or- nsqlookupd://127.0.0.1:4161,127.0.0.2:4161
+	Channel            string
+	HandlerConcurrency int
+	Config             *Config
+	MessageHandler     MessageHandleProc
+	// UnhandledMessageHandler MessageHandleProc
+	Logger *log.Logger
 
 	consumers []*nsq.Consumer
 	wg        sync.WaitGroup
@@ -142,9 +142,9 @@ func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
 		if c.MessageHandler != nil {
 			return c.MessageHandler(m)
 		}
-		if c.UnhandledMessageHandler != nil {
-			return c.UnhandledMessageHandler(m)
-		}
+		// if c.UnhandledMessageHandler != nil {
+		// 	return c.UnhandledMessageHandler(m)
+		// }
 		return nil
 	}
 

@@ -123,7 +123,7 @@ func TestProducer_Write(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		topic := "myTopic"
+		topic := "goTestProducer_Write"
 		for _, word := range []string{"Welcome", "to", "the", "Nsq", "Golang", "client", "library"} {
 			p.Write(topic, []byte(word))
 		}
@@ -165,12 +165,11 @@ func TestProducer_Write(t *testing.T) {
 				message.Finish()
 				return nil
 			}),
-			UnhandledMessageHandler: nil,
 		}
 
 		ctx, _ := context.WithTimeout(context.Background(), 3*time.Second)
 
-		err := c.Subscribe([]string{"myTopic"})
+		err := c.Subscribe([]string{"goTestProducer_Write"})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -198,7 +197,7 @@ func TestProducer_WriteContent(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		topic := "myTopic"
+		topic := "goTestProducer_WriteContent"
 		for _, word := range []string{"Welcome", "to", "the", "Nsq", "Golang", "client", "library"} {
 			msg := nsq.MessageContent{
 				Body: []byte(word),
@@ -258,12 +257,11 @@ func TestProducer_WriteContent(t *testing.T) {
 				message.Finish()
 				return nil
 			}),
-			UnhandledMessageHandler: nil,
 		}
 
 		ctx, _ := context.WithTimeout(context.Background(), 3*time.Second)
 
-		err := c.Subscribe([]string{"myTopic"})
+		err := c.Subscribe([]string{"goTestProducer_WriteContent"})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -291,7 +289,7 @@ func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		topic := "myTopic"
+		topic := "goTestProducer_WriteContent_WithTracePropagation"
 		for _, word := range []string{"Welcome", "to", "the", "Nsq", "Golang", "client", "library"} {
 
 			p.WriteContent(topic,
@@ -351,12 +349,11 @@ func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 				message.Finish()
 				return nil
 			}),
-			UnhandledMessageHandler: nil,
 		}
 
 		ctx, _ := context.WithTimeout(context.Background(), 3*time.Second)
 
-		err := c.Subscribe([]string{"myTopic"})
+		err := c.Subscribe([]string{"goTestProducer_WriteContent_WithTracePropagation"})
 		if err != nil {
 			t.Fatal(err)
 		}

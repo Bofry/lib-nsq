@@ -69,7 +69,6 @@ func Example() {
 				message.Finish()
 				return nil
 			}),
-			UnhandledMessageHandler: nil,
 		}
 
 		ctx, _ := context.WithTimeout(context.Background(), 15*time.Second)

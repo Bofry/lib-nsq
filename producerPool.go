@@ -2,6 +2,7 @@ package nsq
 
 import (
 	"fmt"
+	"log"
 	"sync/atomic"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 type ProducerPool struct {
 	handles []*nsq.Producer
+	logger  *log.Logger
 
 	replicationFactor int32
 
@@ -152,6 +154,10 @@ func (p *ProducerPool) init() {
 	if p.replicationFactor > size {
 		p.replicationFactor = size
 	}
+
+	// for _, handle := range p.handles {
+	// 	handle.SetLogger(p.logger, nsq.LogLevelInfo)
+	// }
 
 	p.initialized = true
 }
