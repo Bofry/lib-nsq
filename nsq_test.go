@@ -12,6 +12,7 @@ import (
 	"time"
 
 	nsq "github.com/Bofry/lib-nsq"
+	"github.com/Bofry/lib-nsq/tracing"
 	"github.com/joho/godotenv"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
@@ -342,6 +343,23 @@ func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 				}
 				if len(content.State.Value("traceparent")) == 0 {
 					t.Errorf("missing MessageState[traceparent]")
+				}
+
+				// test carrier
+				carrier := tracing.NewMessageStateCarrier(&content.State)
+				if len(carrier.Get("traceparent")) == 0 {
+					t.Errorf("missing MessageStateCarrier.Get(traceparent)")
+				}
+				propagator := __TEST_PROPAGATOR
+				ctx := propagator.Extract(context.Background(), carrier)
+				spx := trace.SpanContextFromContext(ctx)
+				expectedTraceID := __TEST_TRACE_ID
+				if !reflect.DeepEqual(expectedTraceID, spx.TraceID()) {
+					t.Errorf("received trace id expected: %v, got: %v", expectedTraceID, spx.TraceID())
+				}
+				expectedSpanID := __TEST_SPAN_ID
+				if !reflect.DeepEqual(expectedSpanID, spx.SpanID()) {
+					t.Errorf("received span id expected: %v, got: %v", expectedSpanID, spx.SpanID())
 				}
 
 				// t.Logf("[%s] %+v\n", message.Topic, string(content.Body))
