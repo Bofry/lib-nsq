@@ -107,8 +107,8 @@ func (c *MessageContent) WriteTo(w io.Writer) (int64, error) {
  */
 func DecodeMessageContent(source []byte) (*MessageContent, error) {
 	var (
-		state *MessageState = &MessageState{}
-		body  []byte
+		content MessageContent = MessageContent{}
+		body    []byte
 	)
 
 	r := bytes.NewReader(source)
@@ -187,7 +187,7 @@ func DecodeMessageContent(source []byte) (*MessageContent, error) {
 				if len(tagKeyValue) == 2 {
 					key := tagKeyValue[0]
 					val := tagKeyValue[1]
-					state.Set(string(key), val)
+					content.State.Set(string(key), val)
 				}
 			}
 		}
@@ -214,11 +214,9 @@ func DecodeMessageContent(source []byte) (*MessageContent, error) {
 		if err != nil {
 			return nil, err
 		}
+		content.Body = body
 	}
-	return &MessageContent{
-		State: *state,
-		Body:  body,
-	}, nil
+	return &content, nil
 }
 
 func isSupportedMessageContentVersion(ver byte) bool {
