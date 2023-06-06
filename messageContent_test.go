@@ -99,7 +99,7 @@ func TestMessageContent_WriteTo_Case02(t *testing.T) {
 	}
 }
 
-func TestDecodeMessageContent(t *testing.T) {
+func TestDecodeMessageContent_Well(t *testing.T) {
 	b := bytes.Join([][]byte{
 		/* signature           */ {0x1b, 0x4e, 0x53, 0x51},
 		/* version             */ {0x01},
@@ -144,6 +144,19 @@ func TestDecodeMessageContent(t *testing.T) {
 		if !reflect.DeepEqual(expectedBody, content.Body) {
 			t.Errorf("MessageContent.Body expected: %v, got: %v", expectedBody, content.Body)
 		}
+	}
+}
+
+func TestDecodeMessageContent_Bad(t *testing.T) {
+	b := []byte("the quick brown fox jumps over the lazy dog")
+
+	content, err := DecodeMessageContent(b)
+	if err == nil {
+		t.Fatalf("should got error")
+	}
+
+	if content != nil {
+		t.Errorf("MessageContent expected: %v, got: %v", nil, content)
 	}
 }
 

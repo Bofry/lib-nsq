@@ -10,5 +10,10 @@ type Message struct {
 
 func (m *Message) Content() *MessageContent {
 	content, _ := DecodeMessageContent(m.Body)
-	return content
+	if content != nil {
+		return content
+	}
+	return &MessageContent{
+		Body: m.Body,
+	}
 }
