@@ -4,13 +4,7 @@ import (
 	"context"
 )
 
-var (
-	_CONTEXT_KEY_SEVERITY_SPAN SpanKeyType = 0
-)
-
 type (
-	SpanKeyType int
-
 	MessageState interface {
 		Len() int
 		Has(name string) bool
