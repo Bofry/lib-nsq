@@ -1,9 +1,5 @@
 package tracing
 
-import (
-	"context"
-)
-
 type (
 	MessageState interface {
 		Len() int
@@ -12,11 +8,5 @@ type (
 		Set(name string, value []byte) (old []byte, err error)
 		Value(name string) []byte
 		Visit(visit func(name string, value []byte))
-	}
-
-	Context interface {
-		context.Context
-
-		SetValue(key, value interface{})
 	}
 )
