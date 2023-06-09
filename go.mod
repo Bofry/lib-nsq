@@ -3,7 +3,7 @@ module github.com/Bofry/lib-nsq
 go 1.19
 
 require (
-	github.com/Bofry/trace v0.0.0-20230602075229-b7519a568839
+	github.com/Bofry/trace v0.0.0-20230609150550-9f408e99bedf
 	github.com/nsqio/go-nsq v1.1.0
 	go.opentelemetry.io/otel v1.16.0
 	go.opentelemetry.io/otel/trace v1.16.0

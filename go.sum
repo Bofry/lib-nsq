@@ -1,5 +1,7 @@
 github.com/Bofry/trace v0.0.0-20230602075229-b7519a568839 h1:ZnUU+pWZ0D0Oua1j3ULRcBhYj6jS1YRjGgxH0yHZKJs=
 github.com/Bofry/trace v0.0.0-20230602075229-b7519a568839/go.mod h1:GAiwGnBex/FjAmqB9ydLPvQth1E6ljJ10hSgS78U+8A=
+github.com/Bofry/trace v0.0.0-20230609150550-9f408e99bedf h1:EzBLsKVbJLoZns2HpaibmHwXUsaQeGZvug7ZkPo5TqM=
+github.com/Bofry/trace v0.0.0-20230609150550-9f408e99bedf/go.mod h1:GAiwGnBex/FjAmqB9ydLPvQth1E6ljJ10hSgS78U+8A=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
