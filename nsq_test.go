@@ -100,11 +100,18 @@ func TestMain(m *testing.M) {
 		}
 	}
 
-	godotenv.Load(__ENV_FILE)
 	{
-		__TEST_NSQD_SERVERS = strings.Split(os.Getenv("NSQD_SERVERS"), ",")
-		__TEST_NSQD_ADDRESS = os.Getenv("NSQD_ADDRESS")
-		__TEST_NSQLOOKUPD_ADDRESS = os.Getenv("NSQLOOKUPD_ADDRESS")
+		f, err := os.Open(__ENV_FILE)
+		if err != nil {
+			panic(err)
+		}
+		env, err := godotenv.Parse(f)
+		if err != nil {
+			panic(err)
+		}
+		__TEST_NSQD_SERVERS = strings.Split(env["TEST_NSQD_SERVERS"], ",")
+		__TEST_NSQD_ADDRESS = env["TEST_NSQD_ADDRESS"]
+		__TEST_NSQLOOKUPD_ADDRESS = env["TEST_NSQLOOKUPD_ADDRESS"]
 	}
 	m.Run()
 }
