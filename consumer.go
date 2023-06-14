@@ -30,7 +30,7 @@ type Consumer struct {
 }
 
 func (c *Consumer) Subscribe(topics []string) error {
-	c.ensureLogger()
+	c.init()
 
 	if c.disposed {
 		c.Logger.Panic("the Consumer has been disposed")
@@ -48,7 +48,6 @@ func (c *Consumer) Subscribe(topics []string) error {
 		}
 		c.mutex.Unlock()
 	}()
-	c.init()
 	c.running = true
 
 	for _, topic := range topics {
@@ -125,6 +124,10 @@ func (c *Consumer) init() {
 		c.Config = nsq.NewConfig()
 	}
 
+	if c.Logger == nil {
+		c.Logger = defaultLogger
+	}
+
 	c.initialized = true
 }
 
@@ -145,10 +148,4 @@ func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
 	}
 
 	return proc
-}
-
-func (c *Consumer) ensureLogger() {
-	if c.Logger == nil {
-		c.Logger = defaultLogger
-	}
 }

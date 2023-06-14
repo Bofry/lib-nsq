@@ -26,3 +26,7 @@ type (
 		apply(topic string, msg *MessageContent) error
 	}
 )
+
+func DefaultLogger() *log.Logger {
+	return defaultLogger
+}
