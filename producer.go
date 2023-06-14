@@ -76,7 +76,7 @@ func (p *Producer) Write(topic string, body []byte) error {
 		return fmt.Errorf("the Producer has been disposed")
 	}
 	if !p.initialized {
-		defaultLogger.Panic("the Producer haven't be initialized yet")
+		p.logger.Panic("the Producer haven't be initialized yet")
 	}
 
 	p.wg.Add(1)
@@ -90,7 +90,7 @@ func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, msg *
 		return fmt.Errorf("the Producer has been disposed")
 	}
 	if !p.initialized {
-		defaultLogger.Panic("the Producer haven't be initialized yet")
+		p.logger.Panic("the Producer haven't be initialized yet")
 	}
 
 	// apply options
@@ -120,7 +120,7 @@ func (p *Producer) DeferredWrite(topic string, delay time.Duration, body []byte)
 		return fmt.Errorf("the Producer has been disposed")
 	}
 	if !p.initialized {
-		defaultLogger.Panic("the Producer haven't be initialized yet")
+		p.logger.Panic("the Producer haven't be initialized yet")
 	}
 
 	p.wg.Add(1)
