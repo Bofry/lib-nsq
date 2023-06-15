@@ -92,7 +92,7 @@ func TestMessageStateCarrier(t *testing.T) {
 
 		traceparent := state.Value("traceparent")
 		if len(traceparent) == 0 {
-			t.Error("missing request header 'traceparent'")
+			t.Error("missing MessageState 'traceparent'")
 		}
 	}
 
@@ -100,7 +100,7 @@ func TestMessageStateCarrier(t *testing.T) {
 	{
 		keys := carrier.Keys()
 		if !slices.Contains(keys, "traceparent") {
-			t.Error("missing request header 'traceparent'")
+			t.Error("missing MessageState 'traceparent'")
 		}
 	}
 

@@ -1,5 +1,9 @@
 package tracing
 
+import "go.opentelemetry.io/otel/propagation"
+
+var _ propagation.TextMapCarrier = new(MessageStateCarrier)
+
 type MessageStateCarrier struct {
 	value MessageState
 }
