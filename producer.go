@@ -51,7 +51,7 @@ func (p *Producer) WriteContent(topic string, msg *MessageContent, opts ...Produ
 
 	// apply options
 	for _, opt := range opts {
-		err := opt.apply(topic, msg)
+		err := opt.apply(msg)
 		if err != nil {
 			return err
 		}
@@ -95,7 +95,7 @@ func (p *Producer) DeferredWriteContent(topic string, delay time.Duration, msg *
 
 	// apply options
 	for _, opt := range opts {
-		err := opt.apply(topic, msg)
+		err := opt.apply(msg)
 		if err != nil {
 			return err
 		}

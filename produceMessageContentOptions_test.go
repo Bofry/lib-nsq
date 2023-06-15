@@ -53,7 +53,7 @@ func TestWithTracePropagation(t *testing.T) {
 	)
 
 	opt := WithTracePropagation(__TEST_CONTEXT, propagator)
-	err := opt.apply("", msg)
+	err := opt.apply(msg)
 	if err != nil {
 		t.Fatal(err)
 	}

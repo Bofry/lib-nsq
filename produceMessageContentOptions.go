@@ -10,16 +10,14 @@ import (
 
 var _ ProduceMessageContentOption = new(ProduceMessageContentOptionProc)
 
-type ProduceMessageContentOptionProc func(topic string, msg *MessageContent) error
+type ProduceMessageContentOptionProc func(msg *MessageContent) error
 
-func (proc ProduceMessageContentOptionProc) apply(topic string, msg *MessageContent) error {
-	return proc(topic, msg)
+func (proc ProduceMessageContentOptionProc) apply(msg *MessageContent) error {
+	return proc(msg)
 }
 
 func WithTracePropagation(ctx context.Context, propagator propagation.TextMapPropagator) ProduceMessageContentOptionProc {
-	return func(topic string, msg *MessageContent) error {
-		_ = topic
-
+	return func(msg *MessageContent) error {
 		carrier := tracing.NewMessageStateCarrier(&msg.State)
 		if propagator == nil {
 			propagator = trace.GetTextMapPropagator()

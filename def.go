@@ -23,7 +23,7 @@ type (
 	MessageHandleProc func(message *Message) error
 
 	ProduceMessageContentOption interface {
-		apply(topic string, msg *MessageContent) error
+		apply(msg *MessageContent) error
 	}
 )
 
