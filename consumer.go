@@ -30,13 +30,11 @@ type Consumer struct {
 }
 
 func (c *Consumer) Subscribe(topics []string) error {
-	c.init()
-
 	if c.disposed {
-		c.Logger.Panic("the Consumer has been disposed")
+		return fmt.Errorf("the Consumer has been disposed")
 	}
 	if c.running {
-		c.Logger.Panic("the Consumer is running")
+		return fmt.Errorf("the Consumer is running")
 	}
 
 	var err error
@@ -48,6 +46,7 @@ func (c *Consumer) Subscribe(topics []string) error {
 		}
 		c.mutex.Unlock()
 	}()
+	c.init()
 	c.running = true
 
 	for _, topic := range topics {
