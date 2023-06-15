@@ -25,7 +25,7 @@ func (hc MessageStateCarrier) Keys() []string {
 	state := hc.value
 	keys := make([]string, 0, state.Len())
 	state.Visit(func(key string, value []byte) {
-		keys = append(keys, string(key))
+		keys = append(keys, key)
 	})
 	return keys
 }
