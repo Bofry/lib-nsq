@@ -168,7 +168,7 @@ func TestProducer_Write(t *testing.T) {
 			HandlerConcurrency: 3,
 			Config:             config,
 			MessageHandler: nsq.MessageHandleProc(func(message *nsq.Message) error {
-				// t.Logf("[%s] %+v\n", message.Topic, string(message.Body))
+				// t.Logf("[%s][%s] %+v\n", message.Topic, message.Channel, string(message.Body))
 				receivedMessages = append(receivedMessages, string(message.Body))
 				message.Finish()
 				return nil
@@ -260,7 +260,7 @@ func TestProducer_WriteContent(t *testing.T) {
 					t.Errorf("MessageState[foo] expected: %v, got: %v", expectStateFooValue, actualStateFooValue)
 				}
 
-				// t.Logf("[%s] %+v\n", message.Topic, string(content.Body))
+				// t.Logf("[%s][%s] %+v\n", message.Topic, message.Channel, string(message.Body))
 				receivedMessages = append(receivedMessages, string(content.Body))
 				message.Finish()
 				return nil
@@ -369,7 +369,7 @@ func TestProducer_WriteContent_WithTracePropagation(t *testing.T) {
 					t.Errorf("received span id expected: %v, got: %v", expectedSpanID, spx.SpanID())
 				}
 
-				// t.Logf("[%s] %+v\n", message.Topic, string(content.Body))
+				// t.Logf("[%s][%s] %+v\n", message.Topic, message.Channel, string(message.Body))
 				receivedMessages = append(receivedMessages, string(content.Body))
 				message.Finish()
 				return nil
