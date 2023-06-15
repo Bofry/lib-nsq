@@ -12,11 +12,7 @@ func NewMessageStateCarrier(state MessageState) *MessageStateCarrier {
 
 // Get returns the value associated with the passed key.
 func (hc MessageStateCarrier) Get(key string) string {
-	var value = string(hc.value.Value(key))
-	if len(value) == 0 {
-		value = string(hc.value.Value(key))
-	}
-	return value
+	return string(hc.value.Value(key))
 }
 
 // Set stores the key-value pair.
