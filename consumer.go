@@ -136,6 +136,7 @@ func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
 		defer c.wg.Done()
 
 		m := &Message{
+			Channel: c.Channel,
 			Topic:   topic,
 			Message: msg,
 		}
