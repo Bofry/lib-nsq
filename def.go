@@ -2,6 +2,7 @@ package nsq
 
 import (
 	"log"
+	"time"
 
 	"github.com/nsqio/go-nsq"
 )
@@ -18,10 +19,15 @@ var (
 )
 
 type (
-	Config          = nsq.Config
-	MessageDelegate = nsq.MessageDelegate
+	Config = nsq.Config
 
 	MessageHandleProc func(message *Message) error
+
+	MessageDelegate interface {
+		OnFinish(*Message)
+		OnRequeue(m *Message, delay time.Duration, backoff bool)
+		OnTouch(*Message)
+	}
 
 	ProduceMessageContentOption interface {
 		apply(msg *MessageContent) error

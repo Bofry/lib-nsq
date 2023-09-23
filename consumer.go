@@ -135,10 +135,16 @@ func (c *Consumer) createMessageHandler(topic string) nsq.HandlerFunc {
 		c.wg.Add(1)
 		defer c.wg.Done()
 
+		var originalDelegate = msg.Delegate
+
 		m := &Message{
 			Channel: c.Channel,
 			Topic:   topic,
 			Message: msg,
+		}
+		msg.Delegate = &clientMessageDelegate{
+			message:  m,
+			original: originalDelegate,
 		}
 
 		if c.MessageHandler != nil {

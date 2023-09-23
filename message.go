@@ -5,8 +5,9 @@ import "github.com/nsqio/go-nsq"
 type Message struct {
 	*nsq.Message
 
-	Channel string
-	Topic   string
+	Channel  string
+	Topic    string
+	Delegate MessageDelegate
 }
 
 func (m *Message) Content() *MessageContent {
