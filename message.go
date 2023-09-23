@@ -18,3 +18,8 @@ func (m *Message) Content() *MessageContent {
 		Body: m.Body,
 	}
 }
+
+func (m *Message) Clone() *Message {
+	cloned := *m
+	return &cloned
+}
