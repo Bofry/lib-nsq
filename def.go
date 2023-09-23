@@ -18,7 +18,8 @@ var (
 )
 
 type (
-	Config = nsq.Config
+	Config          = nsq.Config
+	MessageDelegate = nsq.MessageDelegate
 
 	MessageHandleProc func(message *Message) error
 
