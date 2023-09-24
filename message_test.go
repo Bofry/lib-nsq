@@ -4,9 +4,98 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
+	"time"
 
-	"github.com/nsqio/go-nsq"
+	nsq "github.com/nsqio/go-nsq"
 )
+
+var _ MessageDelegate = new(mockMessageDelegate)
+
+type mockMessageDelegate struct {
+	OnFinishCalledCount  int
+	OnRequeueCalledCount int
+	OnTouchCalledCount   int
+}
+
+// OnFinish implements MessageDelegate.
+func (d *mockMessageDelegate) OnFinish(*Message) {
+	d.OnFinishCalledCount++
+}
+
+// OnRequeue implements MessageDelegate.
+func (d *mockMessageDelegate) OnRequeue(m *Message, delay time.Duration, backoff bool) {
+	d.OnRequeueCalledCount++
+}
+
+// OnTouch implements MessageDelegate.
+func (d *mockMessageDelegate) OnTouch(*Message) {
+	d.OnTouchCalledCount++
+}
+
+var _ nsq.MessageDelegate = new(mockNsqMessageDelegate)
+
+type mockNsqMessageDelegate struct {
+	OnFinishCalledCount  int
+	OnRequeueCalledCount int
+	OnTouchCalledCount   int
+}
+
+// OnFinish implements nsq.MessageDelegate.
+func (d *mockNsqMessageDelegate) OnFinish(*nsq.Message) {
+	d.OnFinishCalledCount++
+}
+
+// OnRequeue implements nsq.MessageDelegate.
+func (d *mockNsqMessageDelegate) OnRequeue(m *nsq.Message, delay time.Duration, backoff bool) {
+	d.OnRequeueCalledCount++
+}
+
+// OnTouch implements nsq.MessageDelegate.
+func (d *mockNsqMessageDelegate) OnTouch(*nsq.Message) {
+	d.OnTouchCalledCount++
+}
+
+func TestMessage(t *testing.T) {
+	var nsqMessage *nsq.Message
+	{
+		nsqMessage = nsq.NewMessage(
+			nsq.MessageID{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 's', 'd', 'f', 'g', 'h'},
+			[]byte("foo"),
+		)
+		nsqMessage.Delegate = new(mockNsqMessageDelegate)
+	}
+
+	originalDelegate := nsqMessage.Delegate
+	targetDelegate := new(mockMessageDelegate)
+
+	message := &Message{
+		Message:  nsqMessage,
+		Topic:    "gotest",
+		Delegate: targetDelegate,
+	}
+
+	nsqMessage.Delegate = &clientMessageDelegate{
+		message:  message,
+		original: originalDelegate,
+	}
+
+	message.Finish()
+	{
+		var expectedOnFinishCalledCount int = 1
+		if expectedOnFinishCalledCount != targetDelegate.OnFinishCalledCount {
+			t.Errorf("mockMessageDelegate.OnFinishCalledCount expect:: %v, got:: %v\n", expectedOnFinishCalledCount, targetDelegate.OnFinishCalledCount)
+		}
+		var expectedOnRequeueCalledCount int = 0
+		if expectedOnRequeueCalledCount != targetDelegate.OnRequeueCalledCount {
+			t.Errorf("mockMessageDelegate.OnRequeueCalledCount expect:: %v, got:: %v\n", expectedOnRequeueCalledCount, targetDelegate.OnRequeueCalledCount)
+		}
+		var expectedOnTouchCalledCount int = 0
+		if expectedOnTouchCalledCount != targetDelegate.OnTouchCalledCount {
+			t.Errorf("mockMessageDelegate.OnTouchCalledCount expect:: %v, got:: %v\n", expectedOnTouchCalledCount, targetDelegate.OnTouchCalledCount)
+		}
+	}
+
+}
 
 func TestMessage_Content_Well(t *testing.T) {
 	message := Message{

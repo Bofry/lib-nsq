@@ -31,7 +31,7 @@ func (d *clientMessageDelegate) OnRequeue(m *nsq.Message, delay time.Duration, b
 
 // OnTouch implements MessageDelegate.
 func (d *clientMessageDelegate) OnTouch(m *nsq.Message) {
-	d.OnTouch(m)
+	d.original.OnTouch(m)
 	if d.message.Delegate != nil {
 		d.message.Delegate.OnTouch(d.message)
 	}
