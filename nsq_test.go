@@ -109,7 +109,7 @@ func TestMain(m *testing.M) {
 		if err != nil {
 			panic(err)
 		}
-		__TEST_NSQD_SERVERS = strings.Split(env["TEST_NSQD_SEVERS"], ",")
+		__TEST_NSQD_SERVERS = strings.Split(env["TEST_NSQD_SERVERS"], ",")
 		__TEST_NSQD_ADDRESS = env["TEST_NSQD_ADDRESS"]
 		__TEST_NSQLOOKUPD_ADDRESS = env["TEST_NSQLOOKUPD_ADDRESS"]
 	}
