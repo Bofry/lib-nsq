@@ -5,6 +5,8 @@ import (
 	"log"
 	"sync"
 
+	_ "unsafe"
+
 	"github.com/nsqio/go-nsq"
 )
 
@@ -20,8 +22,9 @@ type Consumer struct {
 	MessageHandler     MessageHandleProc
 	Logger             *log.Logger
 
-	consumers []*nsq.Consumer
-	wg        sync.WaitGroup
+	consumerMaxInFlight int
+	consumers           map[string]*nsq.Consumer
+	wg                  sync.WaitGroup
 
 	mutex       sync.Mutex
 	initialized bool
@@ -49,6 +52,10 @@ func (c *Consumer) Subscribe(topics []string) error {
 	c.init()
 	c.running = true
 
+	var (
+		consumerSet = make(map[string]*nsq.Consumer)
+	)
+
 	for _, topic := range topics {
 		var consumer *nsq.Consumer
 		consumer, err = nsq.NewConsumer(topic, c.Channel, c.Config)
@@ -70,8 +77,10 @@ func (c *Consumer) Subscribe(topics []string) error {
 			return err
 		}
 
-		c.consumers = append(c.consumers, consumer)
+		consumerSet[topic] = consumer
 	}
+	c.consumerMaxInFlight = c.Config.MaxInFlight
+	c.consumers = consumerSet
 	return nil
 }
 
@@ -94,6 +103,24 @@ func (c *Consumer) Close() {
 	for _, consumer := range c.consumers {
 		consumer.Stop()
 	}
+}
+
+func (c *Consumer) Pause(topics ...string) error {
+	for _, topic := range topics {
+		if consumer, ok := c.consumers[topic]; ok {
+			consumer.ChangeMaxInFlight(0)
+		}
+	}
+	return nil
+}
+
+func (c *Consumer) Resume(topics ...string) error {
+	for _, topic := range topics {
+		if consumer, ok := c.consumers[topic]; ok {
+			consumer.ChangeMaxInFlight(c.consumerMaxInFlight)
+		}
+	}
+	return nil
 }
 
 func (c *Consumer) connectToNsq(consumer *nsq.Consumer) error {

@@ -12,12 +12,12 @@ import (
 
 func Example() {
 	var (
-		EVN_NSQD_SERVERS       = strings.Split(os.Getenv("NSQD_SERVERS"), ",")
+		ENV_NSQD_SERVERS       = strings.Split(os.Getenv("NSQD_SERVERS"), ",")
 		ENV_NSQD_ADDRESS       = os.Getenv("NSQD_ADDRESS")
 		ENV_NSQLOOKUPD_ADDRESS = os.Getenv("NSQLOOKUPD_ADDRESS")
 	)
 	if len(ENV_NSQD_ADDRESS) == 0 {
-		EVN_NSQD_SERVERS = []string{"127.0.0.1:4150"}
+		ENV_NSQD_SERVERS = []string{"127.0.0.1:4150"}
 	}
 	if len(ENV_NSQD_ADDRESS) == 0 {
 		ENV_NSQD_ADDRESS = "nsqd://127.0.0.1:4150"
@@ -29,7 +29,7 @@ func Example() {
 	// publish
 	{
 		p, err := nsq.NewProducer(&nsq.ProducerConfig{
-			Address:           EVN_NSQD_SERVERS,
+			Address:           ENV_NSQD_SERVERS,
 			Config:            nsq.NewConfig(),
 			ReplicationFactor: 1,
 		})
