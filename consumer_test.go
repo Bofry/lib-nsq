@@ -7,26 +7,11 @@ import (
 	"time"
 
 	nsq "github.com/Bofry/lib-nsq"
-	gonsq "github.com/nsqio/go-nsq"
 )
 
-var _ gonsq.ConnDelegate = new(DummyConnDelegate)
-
-type DummyConnDelegate struct{}
-
-func (d *DummyConnDelegate) OnBackoff(*gonsq.Conn)                         {}
-func (d *DummyConnDelegate) OnClose(*gonsq.Conn)                           {}
-func (d *DummyConnDelegate) OnContinue(*gonsq.Conn)                        {}
-func (d *DummyConnDelegate) OnError(*gonsq.Conn, []byte)                   {}
-func (d *DummyConnDelegate) OnHeartbeat(*gonsq.Conn)                       {}
-func (d *DummyConnDelegate) OnIOError(*gonsq.Conn, error)                  {}
-func (d *DummyConnDelegate) OnMessage(*gonsq.Conn, *gonsq.Message)         {}
-func (d *DummyConnDelegate) OnMessageFinished(*gonsq.Conn, *gonsq.Message) {}
-func (d *DummyConnDelegate) OnMessageRequeued(*gonsq.Conn, *gonsq.Message) {}
-func (d *DummyConnDelegate) OnResponse(*gonsq.Conn, []byte)                {}
-func (d *DummyConnDelegate) OnResume(*gonsq.Conn)                          {}
-
 func TestConsumer_Subscribe(t *testing.T) {
+	t.Parallel()
+
 	// publish
 	{
 		p, err := nsq.NewProducer(&nsq.ProducerConfig{
@@ -43,14 +28,14 @@ func TestConsumer_Subscribe(t *testing.T) {
 		defer p.Close()
 
 		{
-			topic := "gotestTopic1"
+			topic := "gotestConsumer_Subscribe1"
 			for _, word := range []string{"Welcome", "to", "the", "Nsq", "Golang", "client", "library"} {
 				p.Write(topic, []byte(word))
 			}
 		}
 
 		{
-			topic := "gotestTopic2"
+			topic := "gotestConsumer_Subscribe2"
 			for _, word := range []string{"foo", "bar", "baz", "qux", "quux", "corge", "grault", "garply", "waldo", "fred", "plugh", "xyzzy", "thud"} {
 				p.Write(topic, []byte(word))
 			}
@@ -84,7 +69,7 @@ func TestConsumer_Subscribe(t *testing.T) {
 		}),
 	}
 
-	err := c.Subscribe([]string{"gotestTopic1", "gotestTopic2"})
+	err := c.Subscribe([]string{"gotestConsumer_Subscribe1", "gotestConsumer_Subscribe2"})
 	if err != nil {
 		panic(err)
 	}
@@ -105,6 +90,8 @@ func TestConsumer_Subscribe(t *testing.T) {
 }
 
 func TestConsumer_Pause(t *testing.T) {
+	t.Parallel()
+
 	// publish
 	{
 		p, err := nsq.NewProducer(&nsq.ProducerConfig{
@@ -121,14 +108,14 @@ func TestConsumer_Pause(t *testing.T) {
 		defer p.Close()
 
 		{
-			topic := "gotestTopic3"
+			topic := "gotestConsumer_Pause1"
 			for _, word := range []string{"Welcome", "to", "the", "Nsq", "Golang", "client", "library"} {
 				p.DeferredWrite(topic, 2*time.Second, []byte(word))
 			}
 		}
 
 		{
-			topic := "gotestTopic4"
+			topic := "gotestConsumer_Pause2"
 			for _, word := range []string{"foo", "bar", "baz", "qux", "quux", "corge", "grault", "garply", "waldo", "fred", "plugh", "xyzzy", "thud"} {
 				p.DeferredWrite(topic, 2*time.Second, []byte(word))
 			}
@@ -162,11 +149,11 @@ func TestConsumer_Pause(t *testing.T) {
 		}),
 	}
 
-	err := c.Subscribe([]string{"gotestTopic3", "gotestTopic4"})
+	err := c.Subscribe([]string{"gotestConsumer_Pause1", "gotestConsumer_Pause2"})
 	if err != nil {
 		panic(err)
 	}
-	c.Pause("gotestTopic3")
+	c.Pause("gotestConsumer_Pause1")
 
 	select {
 	case <-ctx.Done():
@@ -183,7 +170,9 @@ func TestConsumer_Pause(t *testing.T) {
 	}
 }
 
-func TestConsumer_PauseAndResume(t *testing.T) {
+func TestConsumer_Resume(t *testing.T) {
+	t.Parallel()
+
 	// publish
 	{
 		p, err := nsq.NewProducer(&nsq.ProducerConfig{
@@ -200,14 +189,14 @@ func TestConsumer_PauseAndResume(t *testing.T) {
 		defer p.Close()
 
 		{
-			topic := "gotestTopic5"
+			topic := "gotestConsumer_Resume1"
 			for _, word := range []string{"Welcome", "to", "the", "Nsq", "Golang", "client", "library"} {
 				p.DeferredWrite(topic, 2*time.Second, []byte(word))
 			}
 		}
 
 		{
-			topic := "gotestTopic6"
+			topic := "gotestConsumer_Resume2"
 			for _, word := range []string{"foo", "bar", "baz", "qux", "quux", "corge", "grault", "garply", "waldo", "fred", "plugh", "xyzzy", "thud"} {
 				p.DeferredWrite(topic, 2*time.Second, []byte(word))
 			}
@@ -241,12 +230,12 @@ func TestConsumer_PauseAndResume(t *testing.T) {
 		}),
 	}
 
-	err := c.Subscribe([]string{"gotestTopic5", "gotestTopic6"})
+	err := c.Subscribe([]string{"gotestConsumer_Resume1", "gotestConsumer_Resume2"})
 	if err != nil {
 		panic(err)
 	}
-	c.Pause("gotestTopic5")
-	c.Resume("gotestTopic5")
+	c.Pause("gotestConsumer_Resume1")
+	c.Resume("gotestConsumer_Resume1")
 
 	select {
 	case <-ctx.Done():
