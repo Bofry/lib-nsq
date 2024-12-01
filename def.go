@@ -19,7 +19,8 @@ var (
 )
 
 type (
-	Config = nsq.Config
+	Config   = nsq.Config
+	LogLevel = nsq.LogLevel
 
 	MessageHandleProc func(message *Message) error
 
