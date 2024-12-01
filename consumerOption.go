@@ -16,7 +16,7 @@ func (fn ConsumerOptionFunc) apply(consumer *nsq.Consumer) {
 }
 
 // //////////////////////////////////////
-func WithLoggerLevel(lv nsq.LogLevel) ConsumerOption {
+func WithLoggerLevel(lv LogLevel) ConsumerOption {
 	return ConsumerOptionFunc(func(consumer *nsq.Consumer) {
 		if consumer == nil {
 			return

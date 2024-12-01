@@ -18,6 +18,15 @@ var (
 	defaultLogger *log.Logger = log.New(log.Writer(), LOGGER_PREFIX, log.LstdFlags|log.Lmsgprefix)
 )
 
+// Log levels
+const (
+	LogLevelDebug   = nsq.LogLevelDebug
+	LogLevelInfo    = nsq.LogLevelInfo
+	LogLevelWarning = nsq.LogLevelWarning
+	LogLevelError   = nsq.LogLevelError
+	LogLevelMax     = nsq.LogLevelMax
+)
+
 type (
 	Config   = nsq.Config
 	LogLevel = nsq.LogLevel
