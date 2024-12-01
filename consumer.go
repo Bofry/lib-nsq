@@ -32,7 +32,7 @@ type Consumer struct {
 	disposed    bool
 }
 
-func (c *Consumer) Subscribe(topics []string) error {
+func (c *Consumer) Subscribe(topics []string, opts ...ConsumerOption) error {
 	if c.disposed {
 		return fmt.Errorf("the Consumer has been disposed")
 	}
@@ -64,6 +64,9 @@ func (c *Consumer) Subscribe(topics []string) error {
 		}
 
 		consumer.SetLogger(c.Logger, nsq.LogLevelInfo)
+		for _, opt := range opts {
+			opt.apply(consumer)
+		}
 
 		handler := c.createMessageHandler(topic)
 

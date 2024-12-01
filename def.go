@@ -32,6 +32,10 @@ type (
 	ProduceMessageContentOption interface {
 		apply(msg *MessageContent) error
 	}
+
+	ConsumerOption interface {
+		apply(consumer *nsq.Consumer)
+	}
 )
 
 func DefaultLogger() *log.Logger {
